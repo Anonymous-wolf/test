@@ -1,22 +1,31 @@
 const express = require('express');
+const path = require('path');
 const axios = require('axios');
 const mongoose = require('mongoose');
-const path = require('path'); 
 const app = express();
 const port = 4000;
 
+// MongoDB credentials
 const app_id = 'ef86a019'; 
 const app_key = 'c70fa45d94af992121cd364bbe358bb3'; 
 
 // Connect to MongoDB
-mongoose.connect('mongodb://localhost:27017/recipeFinder')
-  .then(() => console.log('MongoDB connected'))
-  .catch(err => console.error(err));
+mongoose.connect('mongodb://localhost:27017/recipeFinder', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+})
+.then(() => console.log('MongoDB connected'))
+.catch(err => console.error(err));
 
-
+// Serve static files from the root directory
 app.use(express.static(path.join(__dirname)));
 
+// Serve the index.html file when the root URL is accessed
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
 
+// Define a schema for recipes
 const recipeSchema = new mongoose.Schema({
     label: String,
     image: String,
